@@ -1,17 +1,15 @@
 require 'airport'
 require 'plane'
- 
-# A plane currently in the airport can be requested to take off.
-#
-# No more planes can be added to the airport, if it's full.
-# It is up to you how many planes can land in the airport and how that is impermented.
-#
-# If the airport is full then no planes can land
+require 'Weather'
+
+
 describe Airport do
   let(:airport) { Airport.new }
   let(:plane)   {Plane.new}
+
+
   context 'taking off and landing' do
-    
+  before(:each) { allow(airport).to receive(:stormy).and_return(false) }
     it 'allows plane to land' do
       airport.receive(plane)
       expect(airport.plane_count).to eq(1)
@@ -33,12 +31,7 @@ describe Airport do
     end
 
   end
-
-  context 'traffic control' do
-    it 'a plane cannot land if the airport is full' do
-      
-    end
-    
+  
     # Include a weather condition using a module.
     # The weather must be random and only have two states "sunny" or "stormy".
     # Try and take off a plane, but if the weather is stormy, the plane can not take off and must remain in the airport.
@@ -47,11 +40,21 @@ describe Airport do
     # If the airport has a weather condition of stormy,
     # the plane can not land, and must not be in the airport
     context 'weather conditions' do
+    before(:each) { allow(airport).to receive(:stormy).and_return(true) }
+  
       it 'a plane cannot take off when there is a storm brewing' do
+        expect{ airport.release(plane) }.to raise_error(RuntimeError, 'There is a storm brewing')
+        # expect{ airport.receive(plane) }.to raise_error(RuntimeError, 'Airport is full')
+
+        # make weather stormy
+        # raise error if plane wants to land  
       end
       
       it 'a plane cannot land in the middle of a storm' do
+        expect{ airport.receive(plane) }.to raise_error(RuntimeError, 'Cannot receive plane due to Storm')
+
+
       end
     end
-  end
+  
 end
